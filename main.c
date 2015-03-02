@@ -61,7 +61,7 @@ void display(array the_array)
 }
 
 
-/*void display_possible(array *possible)
+void display_possible(array *possible)
 {
 	
 	for (int k = 0 ; k < 9 ; k++)
@@ -69,7 +69,7 @@ void display(array the_array)
 		printf("Possibility %d:\n", k);
 		display(possible[k]);
 	}
-}*/
+}
 
 //initialisation of possible array
 void init_possible(array *possible)
@@ -148,12 +148,26 @@ void del_number(int number, int x, int y, array *possible)
 }
 
 
+//initialise final_grid with the input value
 void given_grid(int *argv[], array final_grid)
 {
-	int *ptr_final_grid = &final_grid[0][0];
-	for (int i = 1 ; i < 82 ; i++)
-	{
-		*(ptr_final_grid + (i - 1) * sizeof(int)) = atoi((char *)argv[i]);
+	//we read the 81's value in argv
+	for (int i = 0 ; i < 81 ; i++)
+	{	
+		//and write it in final_grid
+		char *carac = (char *)argv[i + 1];
+		int the_number = atoi(carac);
+		//we check if the number is between 0 and 9
+		if (the_number >= 0 && the_number <= 9)
+		{
+			int shift = i * sizeof(int);
+			final_grid[i / 9][i % 9] = the_number;
+		}
+		else
+		{
+			fprintf(stderr, "Error, the number %d should be between 0 and 9.\n", the_number);
+			exit(0);
+		}
 	}
 }
 	
@@ -176,6 +190,7 @@ void main(int argc, int *argv[])
 
 	init_possible(possible);
 	del_number(7, 5, 8, possible);
-	//display_possible(possible);
+	display_possible(possible);
+	printf("\n\n");
 	display(final_grid);
 }
