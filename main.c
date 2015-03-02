@@ -40,28 +40,36 @@ void check_line(int line[])
 	int alphabet[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 }		
 
-void display(array *possible)
+
+void display(array the_array)
 {
-	for (int k = 0 ; k < 9 ; k++)
+	printf("|-----------------|\n");
+	for (int i = 0 ; i < 9 ; i++)
 	{
-		printf("%d possibility :\n|-----------------|\n", k + 1);
-		for (int i = 0 ; i < 9 ; i++)
+		printf("|");
+		for (int j = 0 ; j < 9 ; j++)
 		{
-			printf("|");
-			for (int j = 0 ; j < 9 ; j++)
+			printf("%d", the_array[i][j]);
+			if (j < 8)
 			{
-				printf("%d", possible[i][j][k]);
-				if (j < 8)
-				{
-					printf(" ");
-				}
+				printf(" ");
 			}
-			printf("|\n");
 		}
-		printf("|-----------------|\n\n");
+		printf("|\n");
 	}
+	printf("|-----------------|\n\n");
 }
 
+
+/*void display_possible(array *possible)
+{
+	
+	for (int k = 0 ; k < 9 ; k++)
+	{
+		printf("Possibility %d:\n", k);
+		display(possible[k]);
+	}
+}*/
 
 //initialisation of possible array
 void init_possible(array *possible)
@@ -139,14 +147,35 @@ void del_number(int number, int x, int y, array *possible)
 		
 }
 
+
+void given_grid(int *argv[], array final_grid)
+{
+	int *ptr_final_grid = &final_grid[0][0];
+	for (int i = 1 ; i < 82 ; i++)
+	{
+		*(ptr_final_grid + (i - 1) * sizeof(int)) = atoi((char *)argv[i]);
+	}
+}
 	
-void main(int argc, int argv)
+void main(int argc, int *argv[])
 {
 	//var
 	array possible[9];
+	array final_grid;
 
+	//we check if the input is ok:
+	if (argc != 82)
+	{
+		fprintf(stderr, "%d arguments, usage: x x x x..., where there is 81 x and x is between 0 and 9 (0 for a blank box)./n", argc);
+		exit(0);
+	}
+
+	//we read the value from the user
+	given_grid(argv, final_grid);
 	printf("Hello world !\n");
+
 	init_possible(possible);
 	del_number(7, 5, 8, possible);
-	display(possible);
+	//display_possible(possible);
+	display(final_grid);
 }
