@@ -88,7 +88,7 @@ void init_possible(array *possible)
 }
 
 
-void del_number(int number, int x, int y, array *possible)
+void del_number(int number, /* vertical */ int x, /* horizontal */ int y, array *possible)
 {
 	//clean the box[x][y] of all possibles array
 	for (int k = 0 ; k < 9 ; k++)
@@ -99,13 +99,13 @@ void del_number(int number, int x, int y, array *possible)
 	//clean the vertical boxes
 	for (int i = 0 ; i < 9 ; i++)
 	{
-		possible[i][y][number - 1] = 0;
+		possible[number - 1][x][i] = 0;
 	}
 
 	//clean the horizontal boxes
 	for (int j = 0 ; j < 9 ; j++)
 	{
-		possible[x][j][number - 1] = 0;
+		possible[number - 1][j][y] = 0;
 	}
 
 	//clean the 3*3 box
