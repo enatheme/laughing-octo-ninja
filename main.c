@@ -74,14 +74,14 @@ void display_possible(array *possible)
 //initialisation of possible array
 void init_possible(array *possible)
 {
-	//initialisation of all posibilities
-	for (int i = 0 ; i < 9 ; i++)
+	array tmp_possible;
+	for (int k = 0 ; k < 9 ; k++)
 	{
-		for (int j = 0 ; j < 9 ; j++)
+		for (int i = 0 ; i < 9 ; i++)
 		{
-			for (int k = 0 ; k < 9 ; k++)
+			for (int j = 0 ; j < 9 ; j++)
 			{
-				possible[i][j][k] = k + 1;
+				possible[k][i][j] = k + 1;
 			}
 		}
 	}
@@ -93,7 +93,7 @@ void del_number(int number, int x, int y, array *possible)
 	//clean the box[x][y] of all possibles array
 	for (int k = 0 ; k < 9 ; k++)
 	{
-		possible[x][y][k] = 0;
+		possible[k][x][y] = 0;
 	}
 
 	//clean the vertical boxes
@@ -141,7 +141,7 @@ void del_number(int number, int x, int y, array *possible)
 	{
 		for (int cmp2 = m ; cmp2 < m + 3 ; cmp2++)
 		{
-			possible[cmp][cmp2][number - 1] = 0;
+			possible[number - 1][cmp][cmp2] = 0;
 		}
 	}
 		
