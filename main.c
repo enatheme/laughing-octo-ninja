@@ -90,61 +90,63 @@ void init_possible(array *possible)
 
 void del_number(int number, /* vertical */ int x, /* horizontal */ int y, array *possible)
 {
-	//clean the box[x][y] of all possibles array
-	for (int k = 0 ; k < 9 ; k++)
+	if (number != 0)
 	{
-		possible[k][x][y] = 0;
-	}
-
-	//clean the vertical boxes
-	for (int i = 0 ; i < 9 ; i++)
-	{
-		possible[number - 1][x][i] = 0;
-	}
-
-	//clean the horizontal boxes
-	for (int j = 0 ; j < 9 ; j++)
-	{
-		possible[number - 1][j][y] = 0;
-	}
-
-	//clean the 3*3 box
-	int l = 0, m = 0;
-	if (x < 3)
-	{
-		l = 0;
-	}
-	else if (x < 6)
-	{
-		l = 3;
-	}
-	else
-	{
-		l = 6;
-	}
-
-	if (y < 3)
-	{
-		m = 0;
-	}
-	else if (y < 6)
-	{
-		m = 3;
-	}
-	else
-	{
-		m = 6;
-	}
-
-	
-	for (int cmp = l ; cmp < l + 3 ; cmp++)
-	{
-		for (int cmp2 = m ; cmp2 < m + 3 ; cmp2++)
+		//clean the box[x][y] of all possibles array
+		for (int k = 0 ; k < 9 ; k++)
 		{
-			possible[number - 1][cmp][cmp2] = 0;
+			possible[k][x][y] = 0;
 		}
-	}
-		
+
+		//clean the vertical boxes
+		for (int i = 0 ; i < 9 ; i++)
+		{
+			possible[number - 1][x][i] = 0;
+		}
+	
+		//clean the horizontal boxes
+		for (int j = 0 ; j < 9 ; j++)
+		{
+			possible[number - 1][j][y] = 0;
+		}
+	
+		//clean the 3*3 box
+		int l = 0, m = 0;
+		if (x < 3)
+		{
+			l = 0;
+		}
+		else if (x < 6)
+		{
+			l = 3;
+		}
+		else
+		{
+			l = 6;
+		}
+	
+		if (y < 3)
+		{
+			m = 0;
+			}
+		else if (y < 6)
+		{
+			m = 3;
+		}
+		else
+		{
+			m = 6;
+		}
+	
+	
+		for (int cmp = l ; cmp < l + 3 ; cmp++)
+		{
+			for (int cmp2 = m ; cmp2 < m + 3 ; cmp2++)
+			{
+				possible[number - 1][cmp][cmp2] = 0;
+			}
+		}
+	}		
 }
 
 
@@ -160,7 +162,6 @@ void given_grid(int *argv[], array final_grid)
 		//we check if the number is between 0 and 9
 		if (the_number >= 0 && the_number <= 9)
 		{
-			int shift = i * sizeof(int);
 			final_grid[i / 9][i % 9] = the_number;
 		}
 		else
@@ -189,7 +190,15 @@ void main(int argc, int *argv[])
 	printf("Hello world !\n");
 
 	init_possible(possible);
-	del_number(7, 5, 8, possible);
+	display(final_grid);
+	for (int i = 0 ; i < 81 ; i++)
+	{
+//		printf("%d : %d-%d\n", final_grid[i / 9][i % 9], i / 9, i % 9);
+//		display(final_grid);
+		del_number((int)final_grid[i / 9][i % 9], i / 9, i % 9, possible);
+	}
+
+//del_number(7, 5, 8, possible);
 	display_possible(possible);
 	printf("\n\n");
 	display(final_grid);
