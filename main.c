@@ -132,7 +132,7 @@ void check_box(int x, int y, array *possible, array final_grid, int the_possibil
 
 //we check a column of ONE possibility
 void check_column(int y, array *possible, array final_grid, int the_possibility)
-
+{
 	//var
 	int set[9];
 	int ret_func = {0, 0};
@@ -154,6 +154,44 @@ void check_column(int y, array *possible, array final_grid, int the_possibility)
 		for (int i = 0 ; i < 9 ; i++)
 		{
 			possible[the_possibility][i][y] = 0;
+		}
+	}
+	//if the return is nul, the value is already assigned
+	else if (ret_func[0] == 0)
+	{
+	}
+	//else the return is negativ, there is a problem
+	else
+	{
+		fprintf(stderr, "Value already assigned at [%d][%d]", x, y);
+	}
+}
+
+
+//we check a row of ONE possibility
+void check_row(int x, array *possible, array final_grid, int the_possibility)
+{
+	//var
+	int set[9];
+	int ret_func = {0, 0};
+
+	//creation of the set
+	for (int i = 0 ; i < 9 ; i++)
+	{
+		set[i] = possible[the_possibility][x][i];
+	}
+
+	//we call the check_set
+	ret_func = check_set(set);
+
+	//if the return is positiv, we assign the value in the final grid
+	if (ret_func[0] > 0)
+	{
+		final_grid[x][y] = ret_func[0];
+		//we remove the value in all possibility
+		for (int i = 0 ; i < 9 ; i++)
+		{
+			possible[the_possibility][x][i] = 0;
 		}
 	}
 	//if the return is nul, the value is already assigned
