@@ -35,10 +35,57 @@ j = y
 
 **/
 
-void check_line(int line[])
+//the set is a 9 array
+int check_set(int set[])
 {
-	int alphabet[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-}		
+	int number = 0;
+	for (int i = 0 ; i < 9 ; i++)
+	{
+		if(set[i] != 0)
+		{
+			if(number != 0)
+			{
+				return(-1);
+			}
+			number = set[i];
+		}
+	}
+	return(number);
+}
+
+//check a case of all possibilities
+void check_case(int x, int y, array *possible, array final_grid)
+{
+	//var
+	int set[9];
+	int ret_func = 0;
+
+	//creation of the set
+	for(int i = 0 ; i < 9 ; i++)
+	{
+		set[i] = possible[i][x][y];
+	}
+
+	//we call the check_set
+	ret_func = check_set(set);
+
+	//if the return is positiv, we assign the value in the final_grid
+	if (ret_func > 0)
+	{
+		final_grid[x][y] = ret_func;
+		//we put a 0 at the [k][x][y]
+		possible[ret_func - 1][x][y] = 0;
+	}
+	//if the return is nul, the value is already assigned
+	else if (ret_func == 0)
+	{
+	}
+	//else the return is negativ, there is a problem
+	else
+	{
+		fprintf(stderr, "Value already assigned at [%d][%d]", x, y);
+	}
+}
 
 
 void display(array the_array)
