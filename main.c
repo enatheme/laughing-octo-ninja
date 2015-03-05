@@ -35,36 +35,50 @@ j = y
 
 **/
 
+//the set is a 9 array
+int[] check_set(int set[])
+{
+	int number[2] = {0, 0};
+	for (int i = 0 ; i < 9 ; i++)
+	{
+		if(set[i] != 0)
+		{
+			if(number != 0)
+			{
+				return(-1);
+			}
+			number = {set[i], i};
+		}
+	}
+	return(number);
+}
+
 
 //check a case of all possibilities
 void check_case(int x, int y, array *possible, array final_grid)
 {
 	//var
-	int tmp_number = 0;
+	int set[9];
+	int ret_func[2] = {0, 0};
 
 	//creation of the set
 	for(int i = 0 ; i < 9 ; i++)
 	{
-		if (set[i] != 0)
-		{
-			if (tmp_number != 0)
-			{
-				tmp_number = -1;
-				i = 10;
-			}
-			tmp_number = set[i];
-		}
+		set[i] = possible[i][x][y];
 	}
 
+	//we call the check_set
+	ret_func = check_set(set);
+
 	//if the return is positiv, we assign the value in the final_grid
-	if (tmp_number > 0)
+	if (ret_func[0] > 0)
 	{
-		final_grid[x][y] = tmp_number;
+		final_grid[x][y] = ret_func[0];
 		//we put a 0 at the [k][x][y]
-		possible[tmp_number - 1][x][y] = 0;
+		possible[ret_func[0] - 1][x][y] = 0;
 	}
 	//if the return is nul, the value is already assigned
-	else if (tmp_number == 0)
+	else if (ret_func[0] == 0)
 	{
 	}
 	//else the return is negativ, there is a problem
@@ -75,6 +89,46 @@ void check_case(int x, int y, array *possible, array final_grid)
 }
 
 
+//we check a box of ONE possibility
+void check_box(int x, int y, array *possible, array final_grid, int the_possibility)
+{
+	//var
+	int set[9];
+	int ret_func = {0, 0};
+	int k = 0;
+
+	//creation of the set
+	for (int i = x ; i < x + 3 ; i++, k++)
+	{
+		for (int j = y ; j < y + 3 ; j++)
+		{
+			set[k] = possible[the_possibility][i][j];
+		}
+	}
+
+	//we call the check_set
+	ret_func = check_set(set);
+
+	//if the return is positiv, we assign the value in the final grid
+	if (ret_func[0] > 0)
+	{
+		final_grid[x][y] = ret_func[0];
+		//we remove the value in all possibility
+		for (int i = 0 ; i < 9 ; i++)
+		{
+			possible[i][x + ret_func[1] / 3][y + ret_func[1] % 3] = 0;
+		}
+	}
+	//if the return is nul, the value is already assigned
+	else if (ret_func[0] == 0)
+	{
+	}
+	//else the return is negativ, there is a problem
+	else
+	{
+		fprintf(stderr, "Value already assigned at [%d][%d]", x, y);
+	}
+}
 
 void display(array the_array)
 {
