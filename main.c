@@ -36,21 +36,21 @@ j = y
 **/
 
 //the set is a 9 array
-int[] check_set(int set[])
+void check_set(int set[], int *ret_func)
 {
-	int number[2] = {0, 0};
 	for (int i = 0 ; i < 9 ; i++)
 	{
 		if(set[i] != 0)
 		{
-			if(number != 0)
+			if(ret_func[0] != 0)
 			{
-				return(-1);
+				ret_func[0] = -1;
+				break;
 			}
-			number = {set[i], i};
+			ret_func[0] = set[i];
+			ret_func[1] = i;
 		}
 	}
-	return(number);
 }
 
 
@@ -68,7 +68,7 @@ void check_case(int x, int y, array *possible, array final_grid)
 	}
 
 	//we call the check_set
-	ret_func = check_set(set);
+	check_set(set, ret_func);
 
 	//if the return is positiv, we assign the value in the final_grid
 	if (ret_func[0] > 0)
@@ -94,7 +94,7 @@ void check_box(int x, int y, array *possible, array final_grid, int the_possibil
 {
 	//var
 	int set[9];
-	int ret_func = {0, 0};
+	int ret_func[2] = {0, 0};
 	int k = 0;
 
 	//creation of the set
@@ -107,7 +107,7 @@ void check_box(int x, int y, array *possible, array final_grid, int the_possibil
 	}
 
 	//we call the check_set
-	ret_func = check_set(set);
+	check_set(set, ret_func);
 
 	//if the return is positiv, we assign the value in the final grid
 	if (ret_func[0] > 0)
@@ -135,7 +135,7 @@ void check_column(int y, array *possible, array final_grid, int the_possibility)
 {
 	//var
 	int set[9];
-	int ret_func = {0, 0};
+	int ret_func[2] = {0, 0};
 
 	//creation of the set
 	for (int i = 0 ; i < 9 ; i++)
@@ -144,12 +144,12 @@ void check_column(int y, array *possible, array final_grid, int the_possibility)
 	}
 
 	//we call the check_set
-	ret_func = check_set(set);
+	check_set(set, ret_func);
 
 	//if the return is positiv, we assign the value in the final grid
-	if (ret_func[0] > 0)
+	if (ret_func[0] > 0 && final_grid[ret_func[1]][y] == 0)
 	{
-		final_grid[x][y] = ret_func[0];
+		final_grid[ret_func[1]][y] = ret_func[0];
 		//we remove the value in all possibility
 		for (int i = 0 ; i < 9 ; i++)
 		{
@@ -163,7 +163,7 @@ void check_column(int y, array *possible, array final_grid, int the_possibility)
 	//else the return is negativ, there is a problem
 	else
 	{
-		fprintf(stderr, "Value already assigned at [%d][%d]", x, y);
+		fprintf(stderr, "Value already assigned at [%d][%d]\n", ret_func[1], y);
 	}
 }
 
@@ -173,7 +173,7 @@ void check_row(int x, array *possible, array final_grid, int the_possibility)
 {
 	//var
 	int set[9];
-	int ret_func = {0, 0};
+	int ret_func[2] = {0, 0};
 
 	//creation of the set
 	for (int i = 0 ; i < 9 ; i++)
@@ -182,12 +182,12 @@ void check_row(int x, array *possible, array final_grid, int the_possibility)
 	}
 
 	//we call the check_set
-	ret_func = check_set(set);
+	check_set(set, ret_func);
 
 	//if the return is positiv, we assign the value in the final grid
-	if (ret_func[0] > 0)
+	if (ret_func[0] > 0 && final_grid[x][ret_func[1]] == 0)
 	{
-		final_grid[x][y] = ret_func[0];
+		final_grid[x][ret_func[1]] = ret_func[0];
 		//we remove the value in all possibility
 		for (int i = 0 ; i < 9 ; i++)
 		{
@@ -201,7 +201,7 @@ void check_row(int x, array *possible, array final_grid, int the_possibility)
 	//else the return is negativ, there is a problem
 	else
 	{
-		fprintf(stderr, "Value already assigned at [%d][%d]", x, y);
+		fprintf(stderr, "Value already assigned at [%d][%d]", x, ret_func[1]);
 	}
 }
 
@@ -358,13 +358,23 @@ void main(int argc, int *argv[])
 	display(final_grid);
 	for (int i = 0 ; i < 81 ; i++)
 	{
-//		printf("%d : %d-%d\n", final_grid[i / 9][i % 9], i / 9, i % 9);
-//		display(final_grid);
 		del_number((int)final_grid[i / 9][i % 9], i / 9, i % 9, possible);
 	}
-
-//del_number(7, 5, 8, possible);
-	display_possible(possible);
+	for (int j = 0 ; j < 9 ; j++)
+	{
+		for (int i = 0 ; i < 9 ; i++)
+		{
+			check_column(i, possible, final_grid, j);
+		}
+	}
+	for (int j = 0 ; j < 9 ; j++)
+	{
+		for (int i = 0 ; i < 9 ; i++)
+		{
+		//	check_row(i, possible, final_grid, j);
+		}
+	}
+	//display_possible(possible);
 	printf("\n\n");
 	display(final_grid);
 }
