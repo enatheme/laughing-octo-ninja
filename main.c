@@ -1,7 +1,7 @@
 //sudoku solver for 9*9 array
 #include <stdio.h>
 #include <stdlib.h>
-#define DEBUG
+//#define DEBUG
 
 typedef int line[9];
 typedef line array[9];
@@ -201,7 +201,9 @@ void check_case(int x, int y, array *possible, array final_grid)
 	//else the return is negativ, there is a problem
 	else
 	{
-		//fprintf(stderr, "Value already assigned at [%d][%d]", x, y);
+		#ifdef DEBUG
+		fprintf(stderr, "Value already assigned at [%d][%d]", x, y);
+		#endif
 	}
 }
 
@@ -243,7 +245,9 @@ void check_box(int x, int y, array *possible, array final_grid, int the_possibil
 	//else the return is negativ, there is a problem
 	else
 	{
-		//fprintf(stderr, "Value already assigned at [%d][%d]", x, y);
+		#ifdef DEBUG
+		fprintf(stderr, "Value already assigned at [%d][%d]", x, y);
+		#endif
 	}
 }
 
@@ -254,16 +258,12 @@ void check_column(int y, array *possible, array final_grid, int the_possibility)
 	int set[9];
 	int ret_func[2] = {0, 0};
 
-//	printf("column\n\n");
 
 	//creation of the set
 	for (int i = 0 ; i < 9 ; i++)
 	{
-//		printf("%d", possible[the_possibility][i][y]);
 		set[i] = possible[the_possibility][i][y];
 	}
-//	printf("\n y = %d\n", y);
-//	display(possible[the_possibility]);
 
 	//we call the check_set
 	check_set(set, ret_func);
@@ -285,7 +285,9 @@ void check_column(int y, array *possible, array final_grid, int the_possibility)
 	//else the return is negativ, there is a problem
 	else
 	{
-		//fprintf(stderr, "Value already assigned at [%d][%d]\n", ret_func[1], y);
+		#ifdef DEBUG
+		fprintf(stderr, "Value already assigned at [%d][%d]\n", ret_func[1], y);
+		#endif
 	}
 }
 
@@ -297,12 +299,10 @@ void check_row(int x, array *possible, array final_grid, int the_possibility)
 	int set[9];
 	int ret_func[2] = {0, 0};
 
-//	printf("row\n\n");
 
 	//creation of the set
 	for (int i = 0 ; i < 9 ; i++)
 	{
-//		printf("%d", possible[the_possibility][x][i]);
 		set[i] = possible[the_possibility][x][i];
 	}
 
@@ -326,7 +326,9 @@ void check_row(int x, array *possible, array final_grid, int the_possibility)
 	//else the return is negativ, there is a problem
 	else
 	{
-		//fprintf(stderr, "Value already assigned at [%d][%d]", x, ret_func[1]);
+		#ifdef DEBUG
+		fprintf(stderr, "Value already assigned at [%d][%d]", x, ret_func[1]);
+		#endif
 	}
 }
 
@@ -384,7 +386,7 @@ void main(int argc, int *argv[])
 	//display_possible(possible);
 
 
-	for (int w = 0 ; w < 3 ; w++)
+	for (int w = 0 ; w < 2 ; w++)
 	{
 		for (int j = 0 ; j < 9 ; j++)
 		{
