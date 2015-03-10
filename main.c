@@ -214,13 +214,11 @@ void check_box(int x, int y, array *possible, array final_grid, int the_possibil
 	int ret_func[2] = {0, 0};
 	int k = 0;
 
-	printf("\n\n\n");
 	//creation of the set
 	for (int i = x ; i < x + 3 ; i++)
 	{
 		for (int j = y ; j < y + 3 ; j++, k++)
 		{
-			printf("\n%d", possible[the_possibility][i][j]);
 			set[k] = possible[the_possibility][i][j];
 		}
 	}
@@ -229,14 +227,14 @@ void check_box(int x, int y, array *possible, array final_grid, int the_possibil
 	check_set(set, ret_func);
 
 	//if the return is positiv, we assign the value in the final grid
-	if (ret_func[0] > 0 && final_grid[x][y] == 0)
+	if (ret_func[0] > 0 && final_grid[ret_func[1] / 3 + x][ret_func[1] % 3 + y] == 0)
 	{
 		#ifdef DEBUG
-		fprintf(stdout, "box found ! %d found at [%d][%d].\n", ret_func[0], ret_func[1] / 3, ret_func[1] % 3);
+		fprintf(stdout, "box found ! %d found at [%d][%d].\n", ret_func[0], ret_func[1] / 3 + x, ret_func[1] % 3 + y);
 		#endif
-		final_grid[x][y] = ret_func[0];
+		final_grid[ret_func[1] / 3 + x][ret_func[1] % 3 + y] = ret_func[0];
 		//we remove the value in all possibility
-		del_number(ret_func[0], ret_func[1] / 3, ret_func[1] % 3, possible);
+		del_number(ret_func[0], ret_func[1] / 3 + x, ret_func[1] % 3 + y, possible);
 	}
 	//if the return is nul, the value is already assigned
 	else if (ret_func[0] == 0)
@@ -386,37 +384,29 @@ void main(int argc, int *argv[])
 	//display_possible(possible);
 
 
-	//for (int w = 0 ; w < 3 ; w++){
-	for (int j = 0 ; j < 9 ; j++)
+	for (int w = 0 ; w < 3 ; w++)
 	{
-		for (int i = 0 ; i < 9 ; i++)
+		for (int j = 0 ; j < 9 ; j++)
 		{
-			check_column(i, possible, final_grid, j);
-		}
-	}
-	display(final_grid);
-	for (int j = 0 ; j < 9 ; j++)
-	{
-		for (int i = 0 ; i < 9 ; i++)
-		{
-			check_row(i, possible, final_grid, j);
-			
-			check_case(j, i, possible, final_grid);
-		}
-	}
-
-	for (int k = 0 ; k < 9 ; k++)
-	{
-		for (int j = 0 ; j < 9 ; j+= 3)
-		{
-			for (int i = 0 ; i < 9 ; i+= 3)
+			for (int i = 0 ; i < 9 ; i++)
 			{
-				printf("\n\npossibility %d [%d][%d]\n", k, j, i);
-				check_box(i, j, possible, final_grid, k);
+				check_row(i, possible, final_grid, j);
+				check_column(i, possible, final_grid, j);
+				check_case(j, i, possible, final_grid);
 			}
 		}
+
+		for (int k = 0 ; k < 9 ; k++)
+		{
+			for (int j = 0 ; j < 9 ; j+= 3)
+			{
+				for (int i = 0 ; i < 9 ; i+= 3)
+				{
+					check_box(i, j, possible, final_grid, k);
+				}
+			}
+		}	
 	}	
-	
 
 	//display_possible(possible);
 	printf("\n\n");
