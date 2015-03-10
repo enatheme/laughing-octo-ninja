@@ -1,6 +1,7 @@
 //sudoku solver for 9*9 array
 #include <stdio.h>
 #include <stdlib.h>
+#define DEBUG
 
 typedef int line[9];
 typedef line array[9];
@@ -35,222 +36,7 @@ j = y
 
 **/
 
-//the set is a 9 array
-void check_set(int set[], int *ret_func)
-{
-	for (int i = 0 ; i < 9 ; i++)
-	{
-		if(set[i] != 0)
-		{
-			if(ret_func[0] != 0)
-			{
-				ret_func[0] = -1;
-				break;
-			}
-			ret_func[0] = set[i];
-			ret_func[1] = i;
-		}
-	}
-}
 
-
-//check a case of all possibilities
-void check_case(int x, int y, array *possible, array final_grid)
-{
-	//var
-	int set[9];
-	int ret_func[2] = {0, 0};
-
-	//creation of the set
-	for(int i = 0 ; i < 9 ; i++)
-	{
-		set[i] = possible[i][x][y];
-	}
-
-	//we call the check_set
-	check_set(set, ret_func);
-
-	//if the return is positiv, we assign the value in the final_grid
-	if (ret_func[0] > 0)
-	{
-		final_grid[x][y] = ret_func[0];
-		//we put a 0 at the [k][x][y]
-		possible[ret_func[0] - 1][x][y] = 0;
-	}
-	//if the return is nul, the value is already assigned
-	else if (ret_func[0] == 0)
-	{
-	}
-	//else the return is negativ, there is a problem
-	else
-	{
-		fprintf(stderr, "Value already assigned at [%d][%d]", x, y);
-	}
-}
-
-
-//we check a box of ONE possibility
-void check_box(int x, int y, array *possible, array final_grid, int the_possibility)
-{
-	//var
-	int set[9];
-	int ret_func[2] = {0, 0};
-	int k = 0;
-
-	//creation of the set
-	for (int i = x ; i < x + 3 ; i++, k++)
-	{
-		for (int j = y ; j < y + 3 ; j++)
-		{
-			set[k] = possible[the_possibility][i][j];
-		}
-	}
-
-	//we call the check_set
-	check_set(set, ret_func);
-
-	//if the return is positiv, we assign the value in the final grid
-	if (ret_func[0] > 0)
-	{
-		final_grid[x][y] = ret_func[0];
-		//we remove the value in all possibility
-		for (int i = 0 ; i < 9 ; i++)
-		{
-			possible[i][x + ret_func[1] / 3][y + ret_func[1] % 3] = 0;
-		}
-	}
-	//if the return is nul, the value is already assigned
-	else if (ret_func[0] == 0)
-	{
-	}
-	//else the return is negativ, there is a problem
-	else
-	{
-		fprintf(stderr, "Value already assigned at [%d][%d]", x, y);
-	}
-}
-
-//we check a column of ONE possibility
-void check_column(int y, array *possible, array final_grid, int the_possibility)
-{
-	//var
-	int set[9];
-	int ret_func[2] = {0, 0};
-
-	//creation of the set
-	for (int i = 0 ; i < 9 ; i++)
-	{
-		set[i] = possible[the_possibility][i][y];
-	}
-
-	//we call the check_set
-	check_set(set, ret_func);
-
-	//if the return is positiv, we assign the value in the final grid
-	if (ret_func[0] > 0 && final_grid[ret_func[1]][y] == 0)
-	{
-		final_grid[ret_func[1]][y] = ret_func[0];
-		//we remove the value in all possibility
-		for (int i = 0 ; i < 9 ; i++)
-		{
-			possible[the_possibility][i][y] = 0;
-		}
-	}
-	//if the return is nul, the value is already assigned
-	else if (ret_func[0] == 0)
-	{
-	}
-	//else the return is negativ, there is a problem
-	else
-	{
-		fprintf(stderr, "Value already assigned at [%d][%d]\n", ret_func[1], y);
-	}
-}
-
-
-//we check a row of ONE possibility
-void check_row(int x, array *possible, array final_grid, int the_possibility)
-{
-	//var
-	int set[9];
-	int ret_func[2] = {0, 0};
-
-	//creation of the set
-	for (int i = 0 ; i < 9 ; i++)
-	{
-		set[i] = possible[the_possibility][x][i];
-	}
-
-	//we call the check_set
-	check_set(set, ret_func);
-
-	//if the return is positiv, we assign the value in the final grid
-	if (ret_func[0] > 0 && final_grid[x][ret_func[1]] == 0)
-	{
-		final_grid[x][ret_func[1]] = ret_func[0];
-		//we remove the value in all possibility
-		for (int i = 0 ; i < 9 ; i++)
-		{
-			possible[the_possibility][x][i] = 0;
-		}
-	}
-	//if the return is nul, the value is already assigned
-	else if (ret_func[0] == 0)
-	{
-	}
-	//else the return is negativ, there is a problem
-	else
-	{
-		fprintf(stderr, "Value already assigned at [%d][%d]", x, ret_func[1]);
-	}
-}
-
-
-void display(array the_array)
-{
-	printf("|-----------------|\n");
-	for (int i = 0 ; i < 9 ; i++)
-	{
-		printf("|");
-		for (int j = 0 ; j < 9 ; j++)
-		{
-			printf("%d", the_array[i][j]);
-			if (j < 8)
-			{
-				printf(" ");
-			}
-		}
-		printf("|\n");
-	}
-	printf("|-----------------|\n\n");
-}
-
-
-void display_possible(array *possible)
-{
-	
-	for (int k = 0 ; k < 9 ; k++)
-	{
-		printf("Possibility %d:\n", k);
-		display(possible[k]);
-	}
-}
-
-//initialisation of possible array
-void init_possible(array *possible)
-{
-	array tmp_possible;
-	for (int k = 0 ; k < 9 ; k++)
-	{
-		for (int i = 0 ; i < 9 ; i++)
-		{
-			for (int j = 0 ; j < 9 ; j++)
-			{
-				possible[k][i][j] = k + 1;
-			}
-		}
-	}
-}
 
 
 void del_number(int number, /* vertical */ int x, /* horizontal */ int y, array *possible)
@@ -315,6 +101,242 @@ void del_number(int number, /* vertical */ int x, /* horizontal */ int y, array 
 }
 
 
+
+void display(array the_array)
+{
+	printf("|-----------------|\n");
+	for (int i = 0 ; i < 9 ; i++)
+	{
+		printf("|");
+		for (int j = 0 ; j < 9 ; j++)
+		{
+			printf("%d", the_array[i][j]);
+			if (j < 8)
+			{
+				printf(" ");
+			}
+		}
+		printf("|\n");
+	}
+	printf("|-----------------|\n\n");
+}
+
+
+void display_possible(array *possible)
+{
+	
+	for (int k = 0 ; k < 9 ; k++)
+	{
+		printf("Possibility %d:\n", k);
+		display(possible[k]);
+	}
+}
+
+//initialisation of possible array
+void init_possible(array *possible)
+{
+	array tmp_possible;
+	for (int k = 0 ; k < 9 ; k++)
+	{
+		for (int i = 0 ; i < 9 ; i++)
+		{
+			for (int j = 0 ; j < 9 ; j++)
+			{
+				possible[k][i][j] = k + 1;
+			}
+		}
+	}
+}
+
+
+//the set is a 9 array
+void check_set(int set[], int *ret_func)
+{
+	for (int i = 0 ; i < 9 ; i++)
+	{
+		if(set[i] != 0)
+		{
+			if(ret_func[0] != 0)
+			{
+				ret_func[0] = -1;
+				break;
+			}
+			ret_func[0] = set[i];
+			ret_func[1] = i;
+		}
+	}
+}
+
+
+//check a case of all possibilities
+void check_case(int x, int y, array *possible, array final_grid)
+{
+	//var
+	int set[9];
+	int ret_func[2] = {0, 0};
+
+	//creation of the set
+	for(int i = 0 ; i < 9 ; i++)
+	{
+		set[i] = possible[i][x][y];
+	}
+
+	//we call the check_set
+	check_set(set, ret_func);
+
+	//if the return is positiv, we assign the value in the final_grid
+	if (ret_func[0] > 0 && final_grid[x][y] == 0)
+	{
+		#ifdef DEBUG
+		fprintf(stdout, "case found ! %d found at [%d][%d].\n", ret_func[0], x, y);
+		#endif
+		final_grid[x][y] = ret_func[0];
+		//we put a 0 at the [k][x][y]
+		del_number(ret_func[0], x, y, possible);
+	}
+	//if the return is nul, the value is already assigned
+	else if (ret_func[0] == 0)
+	{
+	}
+	//else the return is negativ, there is a problem
+	else
+	{
+		//fprintf(stderr, "Value already assigned at [%d][%d]", x, y);
+	}
+}
+
+
+//we check a box of ONE possibility
+void check_box(int x, int y, array *possible, array final_grid, int the_possibility)
+{
+	//var
+	int set[9];
+	int ret_func[2] = {0, 0};
+	int k = 0;
+
+	printf("\n\n\n");
+	//creation of the set
+	for (int i = x ; i < x + 3 ; i++)
+	{
+		for (int j = y ; j < y + 3 ; j++, k++)
+		{
+			printf("\n%d", possible[the_possibility][i][j]);
+			set[k] = possible[the_possibility][i][j];
+		}
+	}
+
+	//we call the check_set
+	check_set(set, ret_func);
+
+	//if the return is positiv, we assign the value in the final grid
+	if (ret_func[0] > 0 && final_grid[x][y] == 0)
+	{
+		#ifdef DEBUG
+		fprintf(stdout, "box found ! %d found at [%d][%d].\n", ret_func[0], ret_func[1] / 3, ret_func[1] % 3);
+		#endif
+		final_grid[x][y] = ret_func[0];
+		//we remove the value in all possibility
+		del_number(ret_func[0], ret_func[1] / 3, ret_func[1] % 3, possible);
+	}
+	//if the return is nul, the value is already assigned
+	else if (ret_func[0] == 0)
+	{
+	}
+	//else the return is negativ, there is a problem
+	else
+	{
+		//fprintf(stderr, "Value already assigned at [%d][%d]", x, y);
+	}
+}
+
+//we check a column of ONE possibility
+void check_column(int y, array *possible, array final_grid, int the_possibility)
+{
+	//var
+	int set[9];
+	int ret_func[2] = {0, 0};
+
+//	printf("column\n\n");
+
+	//creation of the set
+	for (int i = 0 ; i < 9 ; i++)
+	{
+//		printf("%d", possible[the_possibility][i][y]);
+		set[i] = possible[the_possibility][i][y];
+	}
+//	printf("\n y = %d\n", y);
+//	display(possible[the_possibility]);
+
+	//we call the check_set
+	check_set(set, ret_func);
+
+	//if the return is positiv, we assign the value in the final grid
+	if (ret_func[0] > 0 && final_grid[ret_func[1]][y] == 0)
+	{
+		#ifdef DEBUG
+		fprintf(stdout, "column found ! %d found at [%d][%d].\n", ret_func[0], ret_func[1], y);
+		#endif
+		final_grid[ret_func[1]][y] = ret_func[0];
+		//we remove the value in all possibility
+		del_number(ret_func[0], ret_func[1], y, possible);
+	}
+	//if the return is nul, the value is already assigned
+	else if (ret_func[0] == 0)
+	{
+	}
+	//else the return is negativ, there is a problem
+	else
+	{
+		//fprintf(stderr, "Value already assigned at [%d][%d]\n", ret_func[1], y);
+	}
+}
+
+
+//we check a row of ONE possibility
+void check_row(int x, array *possible, array final_grid, int the_possibility)
+{
+	//var
+	int set[9];
+	int ret_func[2] = {0, 0};
+
+//	printf("row\n\n");
+
+	//creation of the set
+	for (int i = 0 ; i < 9 ; i++)
+	{
+//		printf("%d", possible[the_possibility][x][i]);
+		set[i] = possible[the_possibility][x][i];
+	}
+
+	//we call the check_set
+	check_set(set, ret_func);
+
+	//if the return is positiv, we assign the value in the final grid
+	if (ret_func[0] > 0 && final_grid[x][ret_func[1]] == 0)
+	{
+		#ifdef DEBUG
+		fprintf(stdout, "row found ! %d found at [%d][%d].\n", ret_func[0], x, ret_func[1]);
+		#endif
+		final_grid[x][ret_func[1]] = ret_func[0];
+		//we remove the value in all possibility
+		del_number(ret_func[0], x, ret_func[1], possible);
+	}
+	//if the return is nul, the value is already assigned
+	else if (ret_func[0] == 0)
+	{
+	}
+	//else the return is negativ, there is a problem
+	else
+	{
+		//fprintf(stderr, "Value already assigned at [%d][%d]", x, ret_func[1]);
+	}
+}
+
+
+
+
+
+
 //initialise final_grid with the input value
 void given_grid(int *argv[], array final_grid)
 {
@@ -360,6 +382,11 @@ void main(int argc, int *argv[])
 	{
 		del_number((int)final_grid[i / 9][i % 9], i / 9, i % 9, possible);
 	}
+
+	//display_possible(possible);
+
+
+	//for (int w = 0 ; w < 3 ; w++){
 	for (int j = 0 ; j < 9 ; j++)
 	{
 		for (int i = 0 ; i < 9 ; i++)
@@ -367,13 +394,30 @@ void main(int argc, int *argv[])
 			check_column(i, possible, final_grid, j);
 		}
 	}
+	display(final_grid);
 	for (int j = 0 ; j < 9 ; j++)
 	{
 		for (int i = 0 ; i < 9 ; i++)
 		{
-		//	check_row(i, possible, final_grid, j);
+			check_row(i, possible, final_grid, j);
+			
+			check_case(j, i, possible, final_grid);
 		}
 	}
+
+	for (int k = 0 ; k < 9 ; k++)
+	{
+		for (int j = 0 ; j < 9 ; j+= 3)
+		{
+			for (int i = 0 ; i < 9 ; i+= 3)
+			{
+				printf("\n\npossibility %d [%d][%d]\n", k, j, i);
+				check_box(i, j, possible, final_grid, k);
+			}
+		}
+	}	
+	
+
 	//display_possible(possible);
 	printf("\n\n");
 	display(final_grid);
