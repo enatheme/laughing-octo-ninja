@@ -1,7 +1,7 @@
 //sudoku solver for 9*9 array
 #include <stdio.h>
 #include <stdlib.h>
-//#define DEBUG
+#define DEBUG
 
 typedef int line[9];
 typedef line array[9];
